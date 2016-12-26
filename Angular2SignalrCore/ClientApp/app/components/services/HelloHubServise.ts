@@ -6,21 +6,36 @@ declare var $: any;
 
 export class HelloHub implements IHelloHub
 {
+    // Все сообщения
     public allMessages: ChatMessage[];
+    // Флаг подключения к Хабу
     public connectionExists: Boolean;
+    // Пользователь зарегистрировал имя
     public isRegistered: Boolean;
+    // $.connection.helloHub.server
     private server: any;
+     // $.connection.helloHub.client
     private client: any;
+    // $.connection.helloHub
     private chat: any;
+
+    // ID подключения
     private userId: string;
+    // Подключенные пользователи
     public Users: SelectItem[];
+    // Событие об изменении списка пользователей
     public onChangeUser: EventEmitter<void> = new EventEmitter<void>(); 
+    // Событие о получении сообщения
     public onAddMessage: EventEmitter<void> = new EventEmitter<void>();
+    // Событие о подключении к хабу
     public onConnected: EventEmitter<void> = new EventEmitter<void>();
+    // Событие о регистрации имент пользователя.
     public onRegistered: EventEmitter<void> = new EventEmitter<void>();
 
     constructor() {
         this.userId = "";
+        // Установим начальный список с именем "Всем". При его выборе
+        // сообщения будут отправлены всем пользователям, кроме текущего
         this.Users = [{ label: "Всем", value: ""}];
         this.connectionExists = false;
         this.isRegistered = false;
@@ -28,11 +43,17 @@ export class HelloHub implements IHelloHub
         this.chat = $.connection.helloHub;
         this.server = this.chat.server;
         this.client = this.chat.client;
+
+        // Установим обработчики событий
         this.registerOnServerEvents();
         this.allMessages = new Array<ChatMessage>();
+
+        // Подсоединимся к Хабу
         this.startConnection();
     }
 
+
+    // Сортровка пользователей по имени. Всем должна быть первой
     private sortUsers() {
         this.Users.sort((a, b: SelectItem) => {
             if (a.label == "Всем") return -1;
@@ -43,10 +64,14 @@ export class HelloHub implements IHelloHub
 
     }
 
+
+    //установим обработчики к событиям от сервера
     private registerOnServerEvents(): void {
 
         let self = this;
 
+
+        // Событие о получении сообщения
         //Task addMessage(string Name, string str, string ConnectionId);
         this.client.addMessage = (name: string, message: string, ConnectionId: string) => {
             // Добавление сообщений на веб-страницу 
@@ -55,8 +80,8 @@ export class HelloHub implements IHelloHub
         };
 
 
-       
-        //Task onConnected(string id, string userName, List < User > users);
+       // Событие о регистрации пользователя
+               //Task onConnected(string id, string userName, List < User > users);
         this.client.onConnected = function (id: string, userName: string, allUsers: User[]) {
             self.isRegistered = true;
                self.userId = id;
@@ -67,7 +92,7 @@ export class HelloHub implements IHelloHub
                }
 
             self.sortUsers();
-
+            // Сообщим об изменении списка пользователей
             self.onRegistered.emit();
         };
 
@@ -96,6 +121,8 @@ export class HelloHub implements IHelloHub
        
     }
 
+    // Найдем пользователя по id
+    // Если не находим то создаем нового пользователя
     findUser(userName:string,id: string): SelectItem
     {
         let idx = this.Users.findIndex((cur: SelectItem) => {
@@ -108,7 +135,7 @@ export class HelloHub implements IHelloHub
         return { label: userName, value:id }
          
     }
-    // Кодирование тегов
+    // Обработаем сообщение с сервера
     addMessage(name: string, message: string, ConnectionId: string): void {
 
         this.allMessages.splice(0, 0, new ChatMessage(message, new Date, this.findUser(name, ConnectionId)));
@@ -116,6 +143,8 @@ export class HelloHub implements IHelloHub
 
     }
 
+
+    // Добавим пользователя и отсортируем по наименованию
     addUser(id: string, name: string): void {
         if (this.userId === "") return;
 
@@ -127,6 +156,7 @@ export class HelloHub implements IHelloHub
         }
     }
 
+    // Подключимся к Хабу
     private startConnection(): void {
         let self = this;
         $.connection.hub.start().done((data: any) => {
@@ -141,21 +171,29 @@ export class HelloHub implements IHelloHub
     }
 
 //======= методы и события сервера
+
+    // Отошлем сообщение Всем или конкретному пользователю
     sendEcho(str: string, Кому: string)
     {
 
         this.server.sendEcho(str, Кому);
     }
+
+    // Отошлем сообщение по имени
     sendByName(message: string, Кому: string)
     {
 
         this.server.sendByName(message, Кому);
     }
+
+
     send(name2: string, message: string)
     {
         this.server.sendByName(name2, message);
 
     }
+
+    
     sendFile(Кому: string, FileName: string, Data: DataInfo)
     {
     }
@@ -170,7 +208,7 @@ export class HelloHub implements IHelloHub
     {
     }
 
-    // Подключение нового пользователя
+    // Зарегистрироваться на сервере по имени
     connect(userName: string)
     {
         this.server.connect(userName);

@@ -1,2 +1,2 @@
-# Angular2SignalrCore5
+# Angular2SignalrCore
 Репозиторий
