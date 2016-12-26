@@ -1,11 +1,10 @@
 ﻿/// <reference path="../models/ForHelloHub.ts"/>
-import { IHelloHub, DataInfo, ChatMessage, User}  from "../models/ForHelloHub";
+import { IHelloHub, DataInfo, ChatMessage, User } from "../models/ForHelloHub";
 import { EventEmitter } from '@angular/core';
 import { SelectItem } from 'primeng/primeng';
 declare var $: any;
 
-export class HelloHub implements IHelloHub
-{
+export class HelloHub implements IHelloHub {
     // Все сообщения
     public allMessages: ChatMessage[];
     // Флаг подключения к Хабу
@@ -14,7 +13,7 @@ export class HelloHub implements IHelloHub
     public isRegistered: Boolean;
     // $.connection.helloHub.server
     private server: any;
-     // $.connection.helloHub.client
+    // $.connection.helloHub.client
     private client: any;
     // $.connection.helloHub
     private chat: any;
@@ -24,7 +23,7 @@ export class HelloHub implements IHelloHub
     // Подключенные пользователи
     public Users: SelectItem[];
     // Событие об изменении списка пользователей
-    public onChangeUser: EventEmitter<void> = new EventEmitter<void>(); 
+    public onChangeUser: EventEmitter<void> = new EventEmitter<void>();
     // Событие о получении сообщения
     public onAddMessage: EventEmitter<void> = new EventEmitter<void>();
     // Событие о подключении к хабу
@@ -36,7 +35,7 @@ export class HelloHub implements IHelloHub
         this.userId = "";
         // Установим начальный список с именем "Всем". При его выборе
         // сообщения будут отправлены всем пользователям, кроме текущего
-        this.Users = [{ label: "Всем", value: ""}];
+        this.Users = [{ label: "Всем", value: "" }];
         this.connectionExists = false;
         this.isRegistered = false;
 
@@ -76,20 +75,20 @@ export class HelloHub implements IHelloHub
         this.client.addMessage = (name: string, message: string, ConnectionId: string) => {
             // Добавление сообщений на веб-страницу 
             console.log('addMessage ' + message);
-            self.addMessage(name, message,ConnectionId);
+            self.addMessage(name, message, ConnectionId);
         };
 
 
-       // Событие о регистрации пользователя
-               //Task onConnected(string id, string userName, List < User > users);
+        // Событие о регистрации пользователя
+        //Task onConnected(string id, string userName, List < User > users);
         this.client.onConnected = function (id: string, userName: string, allUsers: User[]) {
             self.isRegistered = true;
-               self.userId = id;
+            self.userId = id;
             // Добавление всех пользователей
             for (let user of allUsers) {
 
                 self.addUser(user.ConnectionId, user.Name);
-               }
+            }
 
             self.sortUsers();
             // Сообщим об изменении списка пользователей
@@ -107,24 +106,23 @@ export class HelloHub implements IHelloHub
         //Task onUserDisconnected(string id, string Name);
         // Удаляем пользователя
         this.client.onUserDisconnected = (id: string, userName: string) => {
-           
+
             let idx = self.Users.findIndex((cur: SelectItem) => {
                 return cur.value == id;
             });
 
             if (idx != -1) {
-                return self.Users.splice(idx, 1); 
+                return self.Users.splice(idx, 1);
 
-        };
+            };
 
-}
-       
+        }
+
     }
 
     // Найдем пользователя по id
     // Если не находим то создаем нового пользователя
-    findUser(userName:string,id: string): SelectItem
-    {
+    findUser(userName: string, id: string): SelectItem {
         let idx = this.Users.findIndex((cur: SelectItem) => {
             return cur.value == id;
         });
@@ -132,8 +130,8 @@ export class HelloHub implements IHelloHub
         if (idx != -1) {
             return this.Users[idx];
         }
-        return { label: userName, value:id }
-         
+        return { label: userName, value: id }
+
     }
     // Обработаем сообщение с сервера
     addMessage(name: string, message: string, ConnectionId: string): void {
@@ -170,50 +168,43 @@ export class HelloHub implements IHelloHub
         });
     }
 
-//======= методы и события сервера
+    //======= методы и события сервера
 
     // Отошлем сообщение Всем или конкретному пользователю
-    sendEcho(str: string, Кому: string)
-    {
+    sendEcho(str: string, Кому: string) {
 
         this.server.sendEcho(str, Кому);
     }
 
     // Отошлем сообщение по имени
-    sendByName(message: string, Кому: string)
-    {
+    sendByName(message: string, Кому: string) {
 
         this.server.sendByName(message, Кому);
     }
 
 
-    send(name2: string, message: string)
-    {
+    send(name2: string, message: string) {
         this.server.sendByName(name2, message);
 
     }
 
-    
-    sendFile(Кому: string, FileName: string, Data: DataInfo)
-    {
+
+    sendFile(Кому: string, FileName: string, Data: DataInfo) {
     }
 
 
-    evaluteCommand(Кому: string, command: string, Data: DataInfo)
-    {
+    evaluteCommand(Кому: string, command: string, Data: DataInfo) {
     }
 
 
-    resultCommand(Кому: string, command: string, Data: DataInfo)
-    {
+    resultCommand(Кому: string, command: string, Data: DataInfo) {
     }
 
     // Зарегистрироваться на сервере по имени
-    connect(userName: string)
-    {
+    connect(userName: string) {
         this.server.connect(userName);
 
     }
 
-  
+
 }
