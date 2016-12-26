@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<app asp-prerender-module="ClientApp/dist/main-server">Loading...</app>
+
+<script src="~/dist/vendor.js" asp-append-version="true"></script>
+@section scripts {
+    <script src="~/dist/main-client.js" asp-append-version="true"></script>
+<script src="Scripts/jquery-1.9.1.js"></script>
+<script src="Scripts/bootstrap.js"></script>
+<script src="Scripts/json2.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/signalr/jquery.signalr-2.0.3.js"></script>
+<script src="Scripts/jquery.cookie.js"></script>
+<script src="Scripts/dropdowns-enhancement.js"></script>
+<script src="signalr/js"></script>
+}

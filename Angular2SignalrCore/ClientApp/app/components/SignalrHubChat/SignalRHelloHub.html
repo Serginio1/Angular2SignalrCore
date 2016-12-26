@@ -1,0 +1,53 @@
+﻿
+
+   
+
+    <div class="container" id="MainMessage">
+        <form role="form"  (ngSubmit)="sendMessage()">
+
+            <div class="form-group">
+                <textarea type="text" [(ngModel)]="Message" name="Message" class="form-control" placeholder="Сообщение"></textarea>
+            </div>
+
+            <div class="form-group">
+                <div class="btn-group open">
+                    <button  type="submit" class="btn btn-info">Отправить</button>
+                </div>
+                <div class="btn-group" id="users">
+                    <p-dropdown2 [options]="Users" [(ngModel)]="selectedUser" name="dropdownUsers"></p-dropdown2>
+                </div>
+                <div class="btn-group" id="SendByName">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="CheckBoxSendByName" [(ngModel)]="selectUsername"  [disabled]="dropdown.value==''"> По имени
+                        </label>
+                    </div>
+
+
+                </div>
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-xs-12 col-md-8" id="GetingMessage">
+            <template ngFor let-item [ngForOf]="allMessages">
+                <div class='panel panel-primary'>
+                    <div class='panel-heading'>
+                        {{item.From.label}} от {{item.Sent.toLocaleString()}}
+                    </div>
+                    <div class='panel-body'>
+                    {{item.Message}}
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="col-xs-6 col-md-4">
+
+        </div>
+    </div>
